@@ -129,7 +129,11 @@ namespace TeessideUniversity.CCIR.OpenSim
             {
                 newGroup.FromPartID = host;
                 newGroup.ScheduleGroupForFullUpdate();
-                m_scriptModuleComms.DispatchObjectRez(part, newGroup);
+                IScriptModule[] modules = m_scene.RequestModuleInterfaces<IScriptModule>();
+                foreach (IScriptModule module in modules)
+                {
+                    module.PostObjectEvent(host, "object_rez", new object[] { new LSL_String(newGroup.UUID) });
+                }
                 return newGroup.UUID;
             }
         }
