@@ -80,10 +80,11 @@ namespace TeessideUniversity.CCIR.OpenSim
                 return;
             }
 
-            m_scriptModuleComms.RegisterScriptInvocation(this, new string[3]{
+            m_scriptModuleComms.RegisterScriptInvocation(this, new string[4]{
                 "tsuccirRezLinkset",
                 "tsuccirEvenlyDistributeChildPrims",
-                "tsuccirEvenlyDistributeChildPrimsInOtherObject"
+                "tsuccirEvenlyDistributeChildPrimsInOtherObject",
+                "tsuccirRezDuplicate"
             });
         }
 
@@ -132,7 +133,7 @@ namespace TeessideUniversity.CCIR.OpenSim
                 IScriptModule[] modules = m_scene.RequestModuleInterfaces<IScriptModule>();
                 foreach (IScriptModule module in modules)
                 {
-                    module.PostObjectEvent(host, "object_rez", new object[] { new LSL_String(newGroup.UUID) });
+                    module.PostObjectEvent(host, "object_rez", new object[] { new LSL_String(newGroup.UUID.ToString()) });
                 }
                 return newGroup.UUID;
             }
@@ -294,6 +295,46 @@ namespace TeessideUniversity.CCIR.OpenSim
         }
 
         #endregion
+
+        public int tsuccirRezDuplicate(UUID host, UUID script, Vector3 offset, Quaternion rot)
+        {
+            SceneObjectPart hostPart = m_scene.GetSceneObjectPart(host);
+            hostPart.AddScriptLPS(1);
+
+            if (!m_scene.Permissions.CanRezObject(
+                hostPart.ParentGroup.PrimCount,
+                hostPart.OwnerID,
+                hostPart.ParentGroup.AbsolutePosition + (Vector3)offset
+            ))
+            {
+                ScriptError(hostPart, "Cannot duplicate object to destination, owner cannot rez objects at destination parcel.");
+
+                System.Threading.Thread.Sleep(100);
+            }
+            else
+            {
+                SceneObjectGroup duplicate = m_scene.SceneGraph.DuplicateObject(
+                    hostPart.ParentGroup.LocalId,
+                    offset,
+                    hostPart.ParentGroup.RootPart.GetEffectiveObjectFlags(),
+                    hostPart.OwnerID,
+                    hostPart.GroupID,
+                    rot
+                );
+                
+                IScriptModule[] modules = m_scene.RequestModuleInterfaces<IScriptModule>();
+                foreach (IScriptModule module in modules){
+                    module.PostObjectEvent(host, "object_rez", new object[] {new LSL_String(duplicate.RootPart.UUID.ToString()) });
+                }
+                
+                System.Threading.Thread.Sleep(100);
+                foreach (IScriptModule module in modules){
+                    module.PostObjectEvent(duplicate.UUID, "on_rez", new object[]{new LSL_Integer(0)});
+                }
+            }
+
+            return 0;
+        }
 
         #endregion
     }
