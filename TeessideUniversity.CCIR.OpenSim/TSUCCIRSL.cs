@@ -11,6 +11,7 @@ using OpenSim.Framework;
 using OpenSim.Region.Framework.Scenes;
 using OpenSim.Region.Framework.Interfaces;
 using OpenSim.Region.ScriptEngine.Shared;
+using OpenSim.Region.ScriptEngine.Shared.Api;
 using OpenSim.Region.ScriptEngine.Shared.ScriptBase;
 using OpenSim.Region.Physics.Manager;
 
@@ -172,8 +173,7 @@ namespace TeessideUniversity.CCIR.OpenSim
                 size.Z = Math.Max(group.Scene.m_minNonphys, Math.Min(group.Scene.m_maxNonphys, size.Z));
             }
 
-
-            List<SceneObjectPart> parts = group.RootPart.GetLinkParts(ScriptBaseClass.LINK_ALL_CHILDREN);
+            List<SceneObjectPart> parts = LSL_Api.GetLinkParts(group.RootPart, ScriptBaseClass.LINK_ALL_CHILDREN);
             if (volume == 0 && distributionIsZeroVector)
             {
                 foreach (SceneObjectPart part in parts)
