@@ -15,7 +15,7 @@ namespace TeessideUniversity.CCIR.OpenSim
         public static List<T> TypedList<T>(object[] list, T defaultValue)
         {
             List<T> resp = new List<T>(list.Length);
-            foreach(object o in list)
+            foreach (object o in list)
             {
                 try
                 {
