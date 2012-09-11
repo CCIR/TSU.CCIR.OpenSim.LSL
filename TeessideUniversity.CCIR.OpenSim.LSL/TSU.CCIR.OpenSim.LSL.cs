@@ -30,7 +30,7 @@ using TeessideUniversity.CCIR.OpenSim;
 
 namespace TeessideUniversity.CCIR.OpenSim
 {
-    [Extension(Path = "/OpenSim/RegionModules", NodeName = "RegionModule", Id="TSU.CCIR.OpenSim.LSL")]
+    [Extension(Path = "/OpenSim/RegionModules", NodeName = "RegionModule", Id = "TSU.CCIR.OpenSim.LSL")]
     class TSUCCIRSL : INonSharedRegionModule
     {
 
@@ -325,13 +325,15 @@ namespace TeessideUniversity.CCIR.OpenSim
                 );
                 
                 IScriptModule[] modules = m_scene.RequestModuleInterfaces<IScriptModule>();
-                foreach (IScriptModule module in modules){
-                    module.PostObjectEvent(host, "object_rez", new object[] {new LSL_String(duplicate.RootPart.UUID.ToString()) });
+                foreach (IScriptModule module in modules)
+                {
+                    module.PostObjectEvent(host, "object_rez", new object[] { new LSL_String(duplicate.RootPart.UUID.ToString()) });
                 }
-                
+
                 System.Threading.Thread.Sleep(100);
-                foreach (IScriptModule module in modules){
-                    module.PostObjectEvent(duplicate.UUID, "on_rez", new object[]{new LSL_Integer(0)});
+                foreach (IScriptModule module in modules)
+                {
+                    module.PostObjectEvent(duplicate.UUID, "on_rez", new object[] { new LSL_Integer(0) });
                 }
             }
 
