@@ -1,4 +1,4 @@
-<Project frameworkVersion="v3_5" name="TeessideUniversity.CCIR.OpenSim" path="addon-modules/TeessideUniversity.CCIR.OpenSim" type="Library">
+<Project frameworkVersion="v3_5" name="TeessideUniversity.CCIR.OpenSim.LSL" path="addon-modules/TeessideUniversity.CCIR.OpenSim.LSL" type="Library">
 	<Configuration name="Debug">
 		<Options>
 			<OutputPath>../../bin/</OutputPath>

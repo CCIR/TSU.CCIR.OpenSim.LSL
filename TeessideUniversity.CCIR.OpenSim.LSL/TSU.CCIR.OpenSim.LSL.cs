@@ -23,12 +23,14 @@ using LSL_Rotation = OpenSim.Region.ScriptEngine.Shared.LSL_Types.Quaternion;
 using LSL_String = OpenSim.Region.ScriptEngine.Shared.LSL_Types.LSLString;
 using LSL_Vector = OpenSim.Region.ScriptEngine.Shared.LSL_Types.Vector3;
 
-[assembly: Addin("TSUCCIRSL", "0.1")]
+using TeessideUniversity.CCIR.OpenSim;
+
+[assembly: Addin("TSU.CCIR.OpenSim.LSL", "0.1")]
 [assembly: AddinDependency("OpenSim", "0.7.5")]
 
 namespace TeessideUniversity.CCIR.OpenSim
 {
-    [Extension(Path = "/OpenSim/RegionModules", NodeName = "RegionModule", Id="TSUCCIRSL")]
+    [Extension(Path = "/OpenSim/RegionModules", NodeName = "RegionModule", Id="TSU.CCIR.OpenSim.LSL")]
     class TSUCCIRSL : INonSharedRegionModule
     {
 
@@ -47,12 +49,12 @@ namespace TeessideUniversity.CCIR.OpenSim
 
         public string Name
         {
-            get { return "TSU.CCIR.OSSL"; }
+            get { return "TSU.CCIR.OpenSim.LSL"; }
         }
 
         public void Initialise(IConfigSource config)
         {
-            IConfig conf = config.Configs[Name];
+            IConfig conf = config.Configs["TSU.CCIR.OpenSim"];
 
             m_enabled = (conf != null && conf.GetBoolean("Enabled", false));
             m_log.Info(m_enabled ? "Enabled" : "Disabled");
