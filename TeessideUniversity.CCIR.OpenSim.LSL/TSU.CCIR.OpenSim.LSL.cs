@@ -132,6 +132,7 @@ namespace TeessideUniversity.CCIR.OpenSim
             else
             {
                 newGroup.FromPartID = host;
+                newGroup.OriginPartID = host;
                 newGroup.ScheduleGroupForFullUpdate();
                 IScriptModule[] modules = m_scene.RequestModuleInterfaces<IScriptModule>();
                 foreach (IScriptModule module in modules)
@@ -323,7 +324,8 @@ namespace TeessideUniversity.CCIR.OpenSim
                     hostPart.GroupID,
                     rot
                 );
-                
+
+                duplicate.FromPartID = host;
                 IScriptModule[] modules = m_scene.RequestModuleInterfaces<IScriptModule>();
                 foreach (IScriptModule module in modules)
                 {
