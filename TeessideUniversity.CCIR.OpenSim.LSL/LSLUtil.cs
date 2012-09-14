@@ -19,7 +19,7 @@ namespace TeessideUniversity.CCIR.OpenSim
             TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
             foreach (object o in list)
             {
-                if(converter.IsValid(o))
+                if(o is T)
                 {
                     resp.Add((T)o);
                 }
@@ -50,7 +50,7 @@ namespace TeessideUniversity.CCIR.OpenSim
             TypeConverter converter = TypeDescriptor.GetConverter(typeof(int));
             foreach (object o in list)
             {
-                if(converter.IsValid(o))
+                if(o is int)
                 {
                     resp.Add((int)o);
                 }
