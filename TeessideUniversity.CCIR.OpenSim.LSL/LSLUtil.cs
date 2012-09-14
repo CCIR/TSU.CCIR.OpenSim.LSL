@@ -16,16 +16,23 @@ namespace TeessideUniversity.CCIR.OpenSim
         public static List<T> TypedList<T>(object[] list, T defaultValue)
         {
             List<T> resp = new List<T>(list.Length);
+            TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
             foreach (object o in list)
             {
-                try
+                if(converter.IsValid(o))
                 {
-                    resp.Add((T)TypeDescriptor.GetConverter(
-                            typeof(T)).ConvertFrom(o));
+                    resp.Add((T)o);
                 }
-                catch
+                else
                 {
-                    resp.Add(defaultValue);
+                    try
+                    {
+                        resp.Add((T)converter.ConvertFrom(o));
+                    }
+                    catch
+                    {
+                        resp.Add(defaultValue);
+                    }
                 }
             }
 
@@ -40,14 +47,21 @@ namespace TeessideUniversity.CCIR.OpenSim
         public static List<int> AttachPoints(object[] list)
         {
             List<int> resp = new List<int>();
+            TypeConverter converter = TypeDescriptor.GetConverter(typeof(int));
             foreach (object o in list)
             {
-                try
+                if(converter.IsValid(o))
                 {
-                    resp.Add((int)TypeDescriptor.GetConverter(
-                            typeof(int)).ConvertFrom(o));
+                    resp.Add((int)o);
                 }
-                catch { }
+                else
+                {
+                    try
+                    {
+                        resp.Add((int)converter.ConvertFrom(o));
+                    }
+                    catch { }
+                }
             }
 
             resp.RemoveAll(point =>
