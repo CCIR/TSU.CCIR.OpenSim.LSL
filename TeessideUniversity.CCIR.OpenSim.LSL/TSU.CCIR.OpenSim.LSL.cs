@@ -340,6 +340,107 @@ namespace TeessideUniversity.CCIR.OpenSim
             return 0;
         }
 
+        [ScriptInvocation]
+        public int tsuccirAnimate(UUID host, UUID script, string target, object[] start, object[] stop)
+        {
+            SceneObjectPart hostObject;
+
+            if (m_scene.TryGetSceneObjectPart(host, out hostObject))
+            {
+                TaskInventoryItem hostScript = hostObject.Inventory.GetInventoryItem(script);
+                if (hostScript != null)
+                {
+                    Animate(hostObject, hostScript, target,
+                            LSLUtil.TypedList<string>(start, ""),
+                            LSLUtil.TypedList<string>(stop, ""), false);
+                }
+            }
+            return 0;
+        }
+
+        [ScriptInvocation]
+        public int tsuccirForceAnimate(UUID host, UUID script, string target, object[] start, object[] stop)
+        {
+            SceneObjectPart hostObject;
+
+            if (m_scene.TryGetSceneObjectPart(host, out hostObject))
+            {
+                TaskInventoryItem hostScript = hostObject.Inventory.GetInventoryItem(script);
+                if (hostScript != null)
+                {
+                    Animate(hostObject, hostScript, target,
+                            LSLUtil.TypedList<string>(start, ""),
+                            LSLUtil.TypedList<string>(stop, ""), true);
+                }
+            }
+            return 0;
+        }
+
+        private void Animate(SceneObjectPart hostObject,
+                TaskInventoryItem scriptItem, string target,
+                List<string> start, List<string> stop, bool force)
+        {
+            UUID targetUUID;
+            ScenePresence targetPresence;
+            if ((start.Count > 0 || stop.Count > 0) &&
+                    UUID.TryParse(target, out targetUUID) &&
+                    targetUUID != UUID.Zero &&
+                    m_scene.TryGetScenePresence(targetUUID, out targetPresence))
+            {
+                INPCModule npcModule = m_scene.RequestModuleInterface<INPCModule>();
+                bool isNPC = npcModule != null && npcModule.IsNPC(targetUUID,
+                        m_scene);
+                // if force is true, the other checks will be bypassed
+                if (
+                    force ||
+                    (
+                    // if NPC, check for NPC perms
+                        (isNPC && npcModule.CheckPermissions(targetUUID,
+                            hostObject.OwnerID)) ||
+                    // if not NPC, check the perms granter is the avatar and
+                    // that we have animation perms
+                        (!isNPC && scriptItem.PermsGranter == targetUUID &&
+                            (scriptItem.PermsMask &
+                            ScriptBaseClass.PERMISSION_TRIGGER_ANIMATION) != 0
+                        )
+                    )
+                )
+                {
+                    foreach (string thing in start)
+                    {
+                        UUID animID = LSL_Api.InventoryKey(hostObject,
+                                (LSL_String)thing, (int)AssetType.Animation);
+                        if (animID == UUID.Zero)
+                        {
+                            targetPresence.Animator.AddAnimation(thing,
+                                    hostObject.UUID);
+                        }
+                        else
+                        {
+                            targetPresence.Animator.AddAnimation(animID,
+                                    hostObject.UUID);
+                        }
+                    }
+                    foreach (string thing in stop)
+                    {
+                        UUID animID = LSL_Api.KeyOrName(hostObject, thing);
+                        if (animID == UUID.Zero)
+                            targetPresence.Animator.RemoveAnimation(thing);
+                        else
+                            targetPresence.Animator.RemoveAnimation(animID);
+                    }
+
+                    targetPresence.Animator.SendAnimPack();
+                }
+                else
+                {
+                    m_scene.SimChat(string.Format("Cannot animate {0}",
+                            targetUUID), ChatTypeEnum.DebugChannel,
+                            m_scene.Center, "unknown", UUID.Zero, false);
+                }
+            }
+        }
+
         #endregion
     }
 }
