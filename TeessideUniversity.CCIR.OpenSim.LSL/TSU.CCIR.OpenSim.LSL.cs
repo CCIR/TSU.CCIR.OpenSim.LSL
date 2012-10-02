@@ -83,12 +83,7 @@ namespace TeessideUniversity.CCIR.OpenSim
                 return;
             }
 
-            m_scriptModuleComms.RegisterScriptInvocation(this, new string[4]{
-                "tsuccirRezLinkset",
-                "tsuccirEvenlyDistributeChildPrims",
-                "tsuccirEvenlyDistributeChildPrimsInOtherObject",
-                "tsuccirRezDuplicate"
-            });
+            m_scriptModuleComms.RegisterScriptInvocations(this);
         }
 
         public void Close()
@@ -109,6 +104,7 @@ namespace TeessideUniversity.CCIR.OpenSim
             m_scene.SimChat(msg, ChatTypeEnum.DebugChannel, origin.AbsolutePosition, origin.Name, origin.UUID, false);
         }
 
+        [ScriptInvocation]
         public UUID tsuccirRezLinkset(UUID host, UUID script, int numberOfChildPrims)
         {
             numberOfChildPrims = Math.Max(0, numberOfChildPrims);
@@ -239,6 +235,7 @@ namespace TeessideUniversity.CCIR.OpenSim
             return true;
         }
 
+        [ScriptInvocation]
         public int tsuccirEvenlyDistributeChildPrims(UUID host, UUID script, LSL_List args)
         {
             SceneObjectPart hostPart = m_scene.GetSceneObjectPart(host);
@@ -253,6 +250,7 @@ namespace TeessideUniversity.CCIR.OpenSim
             return EvenlyDistributeChildPrims(hostPart.ParentGroup, size, point, rot, distribution, margin) ? 1 : 0;
         }
 
+        [ScriptInvocation]
         public int tsuccirEvenlyDistributeChildPrimsInOtherObject(UUID host, UUID script, string otherObject, object[] argsObj)
         {
             SceneObjectPart hostPart = m_scene.GetSceneObjectPart(host);
@@ -298,6 +296,7 @@ namespace TeessideUniversity.CCIR.OpenSim
 
         #endregion
 
+        [ScriptInvocation]
         public int tsuccirRezDuplicate(UUID host, UUID script, Vector3 offset, Quaternion rot)
         {
             SceneObjectPart hostPart = m_scene.GetSceneObjectPart(host);
