@@ -296,6 +296,7 @@ namespace TeessideUniversity.CCIR.OpenSim
 
         #endregion
 
+        /*
         [ScriptInvocation]
         public int tsuccirRezDuplicate(UUID host, UUID script, Vector3 offset, Quaternion rot)
         {
@@ -440,6 +441,7 @@ namespace TeessideUniversity.CCIR.OpenSim
                 }
             }
         }
+         */
 
         #endregion
     }
