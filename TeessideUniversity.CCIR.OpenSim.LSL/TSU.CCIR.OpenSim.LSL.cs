@@ -236,10 +236,12 @@ namespace TeessideUniversity.CCIR.OpenSim
         }
 
         [ScriptInvocation]
-        public int tsuccirEvenlyDistributeChildPrims(UUID host, UUID script, LSL_List args)
+        public int tsuccirEvenlyDistributeChildPrims(UUID host, UUID script, object[] argsObj)
         {
             SceneObjectPart hostPart = m_scene.GetSceneObjectPart(host);
             hostPart.AddScriptLPS(1);
+            LSL_List args = new LSL_List();
+            args.Data = argsObj;
 
             LSL_Vector size = args.GetVector3Item(0);
             LSL_Vector point = args.GetVector3Item(1);
