@@ -445,6 +445,27 @@ namespace TeessideUniversity.CCIR.OpenSim
         }
          */
 
+        [ScriptInvocation]
+        public int tsuccirShiftLinksetRoot(UUID host, UUID script, Vector3 regionPos)
+        {
+            SceneObjectPart hostPart;
+            if (!m_scene.TryGetSceneObjectPart(host, out hostPart))
+                return 0;
+
+            SceneObjectGroup sog = hostPart.ParentGroup;
+            Vector3 offset = regionPos - sog.RootPart.AbsolutePosition;
+
+            foreach (SceneObjectPart part in sog.Parts)
+                if (!part.IsRoot)
+                    part.OffsetPosition -= offset;
+
+            sog.AbsolutePosition = regionPos;
+
+            sog.ScheduleGroupForTerseUpdate();
+
+            return 0;
+        }
+
         #endregion
     }
 }
